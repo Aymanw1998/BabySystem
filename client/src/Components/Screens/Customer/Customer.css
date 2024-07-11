@@ -1,0 +1,87 @@
+.modal {
+  background-color: cadetblue;
+}
+.body {
+    font-family: sans-serif;
+    margin: 0 auto;
+    padding: 25px;
+    max-width: 400px;
+    min-width: 400px;
+    text-align: center;
+  }
+
+.TitleScreen{
+  font-size: 30px;
+}  
+.heading {
+    text-align: center;
+    font-size: 2em;
+    color: #2d3436;
+    margin: 20px 0 30px;
+  } 
+
+  .card {
+    border-radius: 25px;
+    position: relative;
+    padding: 25px 15px;
+    background-color: #f395c9;
+    margin: 50px 0;
+    box-shadow: 0 2px 5px #ccc;
+    
+  }
+  
+  .cardT {
+    background-color: #5ef3df;
+    
+  }
+  .top {
+    border-radius: 25px 25px 0 0;
+    height: 100px;
+    width: 100%;
+    background-color: #e96eb1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+  }
+  .name {
+    font-size: 30px;
+    color: #000000;
+    display: flex;
+    flex: 1;
+    margin: 5% 10px 0;
+  }
+  
+  .card img {
+    margin: 20px 0px 0 0;
+  }
+  
+  .circle-img {
+    /* border-radius: 50%; */
+     /* border: 7px solid #ffffff;  */
+    width: 130;
+    height: 110px;
+    top: 50px;
+    padding-left: 40px;
+  }
+  
+  .bottom {
+    margin-top: 120px;
+    text-align: right;
+    
+  }
+  
+  .info {
+    margin:  0;
+    color: #000000;
+    direction: ltr;
+    
+  }
+  
+  .bold-text{
+    font-weight: bold;
+  }
+
+  .toClick{
+    cursor: pointer;
+  }

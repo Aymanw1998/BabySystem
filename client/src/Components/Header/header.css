@@ -1,0 +1,11 @@
+header {
+    background-color: #f076c1;
+    padding: 20px;
+    color: rgb(17, 15, 15);
+    justify-content: space-between;
+    align-items: center;
+}
+header h1 {
+    font-size: 50px;
+}
+
