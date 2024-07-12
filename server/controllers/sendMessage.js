@@ -19,7 +19,7 @@ const sendMessage = async (body) => {
     .update();
     console.log(authTokenPromotion.accountSid);
     }catch(err) { 
-      console.error('Error authTokenPromotion message:', error);
+      console.log('Error authTokenPromotion message:', err);
     }
     try {
     const message = await client.messages.create({
