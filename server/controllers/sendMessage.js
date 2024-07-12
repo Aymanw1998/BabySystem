@@ -21,6 +21,16 @@ const sendMessage = async (body) => {
     }catch(err) { 
       console.log('Error authTokenPromotion message:', err);
     }
+    try{
+    const secondaryAuthToken = await client.accounts.v1
+    .secondaryAuthToken()
+    .create();
+
+    console.log("secondaryAuthToken ==>",secondaryAuthToken.accountSid);
+    }catch(err){
+      console.log('Error secondaryAuthToken message:', err);
+
+    }
     try {
     const message = await client.messages.create({
       body: text,
@@ -32,6 +42,13 @@ const sendMessage = async (body) => {
   } catch (error) {
     console.error('Error sending message:', error);
   }
+
+  try{
+    await client.accounts.v1.secondaryAuthToken().remove();
+  }catch(err){
+      console.log('Error secondaryAuthToken message:', err);
+
+    }
 };
 
 // Call the function to send a message
