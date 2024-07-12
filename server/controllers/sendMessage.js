@@ -12,6 +12,12 @@ const sendMessage = async (body) => {
     const text = body.text;
     const to = body.to;
     const from = body.from; 
+
+    const authTokenPromotion = await client.accounts.v1
+    .authTokenPromotion()
+    .update();
+    
+    console.log(authTokenPromotion.accountSid);
     const message = await client.messages.create({
       body: text,
       from: from,
