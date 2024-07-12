@@ -90,7 +90,13 @@ const createMeeting = asyncHandler(async(req, res, next) => {
         to: c.phone,
         }
     await sendMessage.sendMessage(b);
+    try{
     await Meeting.create(meetingSchema);
+    }catch(err) {
+        console.log("Error with create Meeting ==>", err);
+        return next(new errorResponse(`Error cannot create this meeting, try again`));
+
+    }
     meetingSchema = await Meeting.findOne(meetingSchema);
     return res.status(200).json({
         success: true,
@@ -154,6 +160,7 @@ const updateMeeting = asyncHandler(async (req, res, next) => {
         to: c.phone,
         }
     await sendMessage.sendMessage(b);
+    
     meeting = await Meeting.findByIdAndUpdate(req.params.id, meetingSchema);
     meeting = await Meeting.findById(req.params.id);
     meetingSchema = meeting;
@@ -189,15 +196,15 @@ const deleteMeeting = asyncHandler(async (req, res, next) => {
             text: `היי, ${c.firstname +" " + c.lastname} בעל ת.ז. ${c.id} פגישה צילום ${meeting.newborn == true ? " ניובורן" : ""}\nבתאריך: ${day +"/" + month + "/" + year},יום ${dayNames[meetingSchema.date.getDay()]} ובשעה ${hh+":"+mm}\nבוטלה.\n יום טוב`,
             from: `fatom`,
             to: c.phone,
-            }
+        }
         await sendMessage.sendMessage(b);
-    await Meeting.deleteOne({_id: req.params.id})
-    .then(async()=>{
-        const meetings = await Meeting.find();
-    return res.status(200).json({
-        success: true,
-        meetings
-    });
+        await Meeting.deleteOne({_id: req.params.id})
+        .then(async()=>{
+            const meetings = await Meeting.find();
+            return res.status(200).json({
+                success: true,
+                meetings
+            });
     })
     .catch((err) =>{
         if(err)

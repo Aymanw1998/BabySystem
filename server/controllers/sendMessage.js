@@ -17,11 +17,10 @@ const sendMessage = async (body) => {
       from: from,
       to: to,
     });
-    console.log(message);
-
+    console.log("success send with twilio ==> ",message);
     console.log('Message sent successfully:', message.sid);
   } catch (error) {
-    console.error('Error sending message:', error.message);
+    console.error('Error sending message:', error);
   }
 };
 
