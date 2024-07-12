@@ -26,7 +26,7 @@ const sendMessage = async (body) => {
     .secondaryAuthToken()
     .create();
 
-    console.log("secondaryAuthToken ==>",secondaryAuthToken.accountSid);
+    console.log("secondaryAuthToken ==>",secondaryAuthToken.accountSid, secondaryAuthToken.authToken);
     }catch(err){
       console.log('Error secondaryAuthToken message:', err);
 
