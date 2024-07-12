@@ -8,7 +8,7 @@ const send = async(req,res) => {
 
 }
 const sendMessage = async (body) => {
-  try {
+  
     const text = body.text;
     const to = body.to;
     const from = body.from; 
@@ -18,6 +18,7 @@ const sendMessage = async (body) => {
     .update();
     
     console.log(authTokenPromotion.accountSid);
+    try {
     const message = await client.messages.create({
       body: text,
       from: from,
