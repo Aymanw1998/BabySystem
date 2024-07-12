@@ -13,11 +13,14 @@ const sendMessage = async (body) => {
     const to = body.to;
     const from = body.from; 
 
+    try{
     const authTokenPromotion = await client.accounts.v1
     .authTokenPromotion()
     .update();
-    
     console.log(authTokenPromotion.accountSid);
+    }catch(err) { 
+      console.error('Error authTokenPromotion message:', error);
+    }
     try {
     const message = await client.messages.create({
       body: text,
