@@ -12,30 +12,7 @@ const sendMessage = async (body) => {
     const text = body.text;
     const to = body.to;
     const from = body.from; 
-
-    let sid = process.env.SID;
-    let token = process.env.TOKEN;
-    try{
-    const authTokenPromotion = await client.accounts.v1
-    .authTokenPromotion()
-    .update();
-    console.log(authTokenPromotion.accountSid);
-    }catch(err) { 
-      console.log('Error authTokenPromotion message:', err);
-    }
-    try{
-    const secondaryAuthToken = await client.accounts.v1
-    .secondaryAuthToken()
-    .create();
-    sid = secondaryAuthToken.accountSid;
-    token = secondaryAuthToken.secondaryAuthToken
-    console.log("secondaryAuthToken ==>",sid,token);
-    }catch(err){
-      console.log('Error secondaryAuthToken message:', err);
-
-    }
     try {
-      const client = new twilio(sid, token);
       const message = await client.messages.create({
       body: text,
       from: from,
@@ -47,12 +24,6 @@ const sendMessage = async (body) => {
     console.error('Error sending message:', error);
   }
 
-  try{
-    await client.accounts.v1.secondaryAuthToken().remove();
-  }catch(err){
-      console.log('Error secondaryAuthToken message:', err);
-
-    }
 };
 
 // Call the function to send a message
