@@ -13,6 +13,8 @@ const sendMessage = async (body) => {
     const to = body.to;
     const from = body.from; 
 
+    let sid = process.env.SID;
+    let token = process.env.TOKEN;
     try{
     const authTokenPromotion = await client.accounts.v1
     .authTokenPromotion()
@@ -25,14 +27,16 @@ const sendMessage = async (body) => {
     const secondaryAuthToken = await client.accounts.v1
     .secondaryAuthToken()
     .create();
-
-    console.log("secondaryAuthToken ==>",secondaryAuthToken);
+    sid = secondaryAuthToken.accountSid;
+    token = secondaryAuthToken.secondaryAuthToken
+    console.log("secondaryAuthToken ==>",sid,token);
     }catch(err){
       console.log('Error secondaryAuthToken message:', err);
 
     }
     try {
-    const message = await client.messages.create({
+      const client = new twilio(sid, token);
+      const message = await client.messages.create({
       body: text,
       from: from,
       to: to,
