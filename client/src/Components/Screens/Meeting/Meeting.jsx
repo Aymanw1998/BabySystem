@@ -39,7 +39,7 @@ const Meeting = () => {
                     }
                 })
                 console.log("c",c)
-                const date = new Date(new Date(item?.date).getHours() + 3)
+                const date = new Date(new Date(item?.date).getUTCHours())
                 console.log("dates1",c);
                 if(item?.title?.includes(search) || c.firstname?.includes(search) || c.lastname?.includes(search)|| (new Date(item.date)).toString().includes(search) || item?.text?.includes(search)){
                     newM = [...newM, item];
@@ -98,16 +98,16 @@ const Meeting = () => {
             {
                 meetings && meetings.map((m,i)=> {
                     const d = new Date(m.date);
-                    var month = '' + (d.getMonth() + 1),
-                    day = '' + d.getDate(),
-                    year = '' + d.getFullYear(),
-                    hh = '' + d.getHours(),
-                    mm = '' + d.getMinutes();
+                    var month = '' + (d.getUTCMonth() + 1),
+                    day = '' + d.getUTCDate(),
+                    year = '' + d.getUTCFullYear(),
+                    hh = '' + d.getUTCHours(),
+                    mm = '' + d.getUTCMinutes();
                     month = (month.length < 2 ? '0' : '') + month;
                     day = (day.length < 2 ? '0' : '') + day;
                     hh = (hh.length < 2? '0':'') + hh;
                     mm = (mm.length < 2?'0':'')+mm;
-                    const date = [hh,mm].join(':') + " " +[year, month, day].join('-');
+                    const date = [hh,mm].join(':') + " " +[day, month, year].join('-');
                     let name = "", type = "";
 
                     switch(m.type){

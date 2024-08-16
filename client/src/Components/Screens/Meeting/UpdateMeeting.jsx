@@ -17,11 +17,11 @@ const UpdateMeeting = ({customers = null, meetings= null,setMeetings, handleClos
         var theDate = dateU;
         {
             var d = new Date(theDate),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = '' + d.getFullYear(),
-            hh = '' + d.getHours(),
-            mm = '' + d.getMinutes();
+            month = '' + (d.getUTCMonth() + 1),
+            day = '' + d.getUTCDate(),
+            year = '' + d.getUTCFullYear(),
+            hh = '' + d.getUTCHours(),
+            mm = '' + d.getUTCMinutes();
             month = (month.length < 2 ? '0' : '') + month;
             day = (day.length < 2 ? '0' : '') + day;
             hh = (hh.length < 2? '0':'') + hh;
