@@ -26,7 +26,7 @@ const getCustomers = asyncHandler(async(req, res, next) => {
  * @access Public
  */
 const getCustomer = asyncHandler(async(req, res, next) => {
-    const customer = await Customer.findOne({id: req.params.id});
+    const customer = await Customer.findOne({_id: req.params.id});
     console.log("customer", customer);
     if(customer == null)
         return next(new errorResponse(`Dont have customer with id :[${req.params.id}]`));

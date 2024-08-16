@@ -1,5 +1,5 @@
 /* Devlopment */
-export const URL = 'https://babysystem-server.onrender.com'//'http://localhost:5000';
+export const URL = 'http://localhost:5000';
 // export const SOCKET_URL = 'http://localhost:5500'
 
 /* Prodevtion */

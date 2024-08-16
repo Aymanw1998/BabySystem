@@ -1,5 +1,5 @@
 header {
-    background-color: #f076c1;
+    background-color: #bcdfd6;
     padding: 20px;
     color: rgb(17, 15, 15);
     justify-content: space-between;
@@ -8,4 +8,32 @@ header {
 header h1 {
     font-size: 50px;
 }
+.System {
+    display: flex;
+}
 
+.logoSystem{
+    width: 5%;
+    /* display: inline-block; */
+}
+
+.nameSystem{
+    width: 30%;
+    margin: 0 auto;
+}
+
+li {
+    margin-left: 50px;
+    cursor: pointer;   
+}
+li:hover {
+    background-color: blue;
+    /* font-size: large; */
+    color: aliceblue;
+}
+
+.chick {
+    background-color: blue;
+    font-size: large;
+    color: aliceblue; 
+}

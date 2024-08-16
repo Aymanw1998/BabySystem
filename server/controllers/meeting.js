@@ -10,6 +10,8 @@ const dayNames = ["א", "ב", "ג", "ד", "ה", "ו", "שבת"];
  * @route GET /api/meeting/
  * @access Public
  */
+
+
 const getMeetings = asyncHandler(async(req, res, next)=> {
     const meetings = await Meeting.find();
     if(!meetings)
@@ -44,21 +46,15 @@ const getMeeting = asyncHandler(async(req, res, next) => {
  * @access Public
  */
 const createMeeting = asyncHandler(async(req, res, next) => {
+    req.body.type = parseInt(req.body.type);
     console.log("create", req.body);
 
     //if customer is exist
     const CustomerModel = require('../models/customer');
-    const customer = await CustomerModel.findOne({id: req.body.customer.split(' ')[0]});
+    const customer = await CustomerModel.findOne({_id: req.body.customer});
     console.log("customer", customer);
     if(!customer){
-        return next(new errorResponse(`The customer with id :[${req.body.customer.split(' ')[0]}] is not exist`));
-    }
-    
-    //date is empty
-    req.body.date = new Date(req.body.date);
-    const meetingBySameDate = Meeting.findOne({date: req.body.date});
-    if(!meetingBySameDate){
-        return next(new errorResponse(`We have meeting with same date`));
+        return next(new errorResponse(`The customer with id :[${req.body.customer}] is not exist`));
     }
     
     
@@ -68,10 +64,10 @@ const createMeeting = asyncHandler(async(req, res, next) => {
         date: new Date(req.body.date), 
         status: false,
         text: req.body.text,
-        newborn: req.body.newborn,
+        type: req.body.type,
     }
     const Customer = require('./../models/customer');
-    let c = await Customer.findOne({id: meetingSchema.customer.split(' ')[0]});
+    let c = await Customer.findOne({_id: meetingSchema.customer});
     console.log("c", c.id, c.firstname +" " + c.lastname, c.phone);
     var d = meetingSchema.date,
     month = '' + (d.getMonth() + 1),
@@ -84,19 +80,22 @@ const createMeeting = asyncHandler(async(req, res, next) => {
     day = (day.length < 2 ? '0' : '') + day;
     hh = (hh < 10 ? '0' : '') + hh;
     mm = (mm < 10 ? '0' : '') + mm;
+    
+    let type = " ";
+
+    switch(req.body.type) {
+        case 1: type = "ניובורן";break;
+        case 2: type = "גיל שנה"; break;
+        case 3: type = req.body.text == "" ? "##" : req.body.text; break;
+    }
+    const msg = "היי " + c.firstname +" " + c.lastname + "\n" + "קבענו לך צילומי " +  " " + type + "\nבתאריך:" +day +"/" + month + "/" + year + ", יום " + dayNames[meetingSchema.date.getDay()] + " ושעה " + hh+":"+mm + "\nיש להגיע לפני הזמן ב-5 דקות\nביטול לפחות יומיים לפני יום הצילום\nנתראה בקרוב\nפאטמה אלזינאטי"
     const b = {
-        text: `היי, ${c.firstname +" " + c.lastname} בעל ת.ז. ${c.id} נקבע לך פגישה צילום ${meetingSchema.newborn == true ? " ניובורן" : ""}\nבתאריך: ${day +"/" + month + "/" + year},יום ${dayNames[meetingSchema.date.getDay()]} ובשעה ${hh+":"+mm},${meetingSchema.text !== "" ? "הערה:" + meetingSchema.text : ""}.\n יום טוב`,
+        text: msg, 
         from: `fatom`,
         to: c.phone,
         }
     await sendMessage.sendMessage(b);
-    try{
     await Meeting.create(meetingSchema);
-    }catch(err) {
-        console.log("Error with create Meeting ==>", err);
-        return next(new errorResponse(`Error cannot create this meeting, try again`));
-
-    }
     meetingSchema = await Meeting.findOne(meetingSchema);
     return res.status(200).json({
         success: true,
@@ -108,6 +107,7 @@ const createMeeting = asyncHandler(async(req, res, next) => {
 // @route   PUT /api/meeting/:id
 // @access  Private with token
 const updateMeeting = asyncHandler(async (req, res, next) => {
+    req.body.type = parseInt(req.body.type);
     console.log("update", req.body);
 
     let meeting = await Meeting.findById(req.params.id);
@@ -116,7 +116,7 @@ const updateMeeting = asyncHandler(async (req, res, next) => {
     }
     //if customer is exist
     const CustomerModel = require('../models/customer');
-    const customer = await CustomerModel.findOne({id: req.body.customer.split(" ")[0]});
+    const customer = await CustomerModel.findOne({_id: req.body.customer});
     console.log("customer", customer);
     if(!customer){
         return next(new errorResponse(`The customer with id :[${req.body.customer}] is not exist`));
@@ -131,18 +131,18 @@ const updateMeeting = asyncHandler(async (req, res, next) => {
             return next(new errorResponse(`We have meeting with same date`));
         }
     })
-    console.log("newborn", req.body.newborn);
     let meetingSchema = {
         title: req.body.title,
         customer: req.body.customer,
         date: new Date(req.body.date), 
         status: false,
         text: req.body.text,
-        newborn: req.body.newborn,
+        type: req.body.type,
     }
     const Customer = require('./../models/customer');
-    let c = await Customer.findOne({id: meetingSchema.customer.split(' ')[0]});
+    let c = await Customer.findOne({_id: meetingSchema.customer});
     console.log("c", c.id, c.firstname +" " + c.lastname, c.phone);
+    
     var d = meetingSchema.date,
     month = '' + (d.getMonth() + 1),
     day = '' + d.getDate(),
@@ -154,13 +154,21 @@ const updateMeeting = asyncHandler(async (req, res, next) => {
     day = (day.length < 2 ? '0' : '') + day;
     hh = (hh < 10 ? '0' : '') + hh;
     mm = (mm < 10 ? '0' : '') + mm;
+    let type = " ";
+
+    switch(req.body.type) {
+        case 1: type = "ניובורן";break;
+        case 2: type = "גיל שנה"; break;
+        case 3: type = req.body.text == "" ? "##" : req.body.text; break;
+    }
+    const msg = "היי " + c.firstname +" " + c.lastname + "\n" + " שונה לך צילומי" + " " + type + "\nבתאריך:" +day +"/" + month + "/" + year + ", יום " + dayNames[meetingSchema.date.getDay()] + " ושעה " + hh+":"+mm + "\nיש להגיע לפני הזמן ב-5 דקות\nביטול לפחות יומיים לפני יום הצילום\nנתראה בקרוב\nפאטמה אלזינאטי"
     const b = {
-        text: `היי, ${c.firstname +" " + c.lastname} בעל ת.ז. ${c.id} עודכן פגישה צילום ${meeting.newborn == true ? " ניובורן" : ""}\nבתאריך: ${day +"/" + month + "/" + year},יום ${dayNames[meetingSchema.date.getDay()]} ובשעה ${hh+":"+mm},${meetingSchema.text !== "" ? "הערה:" + meetingSchema.text : ""}.\n יום טוב`,
+        text: msg, 
         from: `fatom`,
         to: c.phone,
         }
+        
     await sendMessage.sendMessage(b);
-    
     meeting = await Meeting.findByIdAndUpdate(req.params.id, meetingSchema);
     meeting = await Meeting.findById(req.params.id);
     meetingSchema = meeting;
@@ -174,14 +182,15 @@ const updateMeeting = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/meeting/:id
 // @access  Private with token
 const deleteMeeting = asyncHandler(async (req, res, next) => {
-    let meeting = await Meeting.deleteOne({ _id: req.params.id });
-    
+    let meeting = await Meeting.findById(req.params.id);
+    console.log("meeting", meeting);
     if(!meeting)
         return next(new errorResponse(`The customer with id :[${req.params.id}] is not exist`));
         const Customer = require('./../models/customer');
-        let c = await Customer.findOne({id: meetingSchema.customer.split(" ")[0]});
-        console.log("c", c.id, c.firstname +" " + c.lastname, c.phone);
-        var d = meetingSchema.date,
+        let c = await Customer.findOne({_id: meeting.customer});
+        console.log("c", c);
+        if(c){
+        var d = meeting.date,
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear(),
@@ -192,19 +201,29 @@ const deleteMeeting = asyncHandler(async (req, res, next) => {
         day = (day.length < 2 ? '0' : '') + day;
         hh = (hh < 10 ? '0' : '') + hh;
         mm = (mm < 10 ? '0' : '') + mm;
+        switch(parseInt(meeting.type)) {
+            case 1: type = "ניובורן";break;
+            case 2: type = "גיל שנה"; break;
+            case 3: type = meeting.text == "" ? "##" : meeting.text; break;
+        }
+        const msg = "היי " + c.firstname +" " + c.lastname + "\n" + " בוטל לך צילומי" +  " "+ type + "\nבתאריך:" +day +"/" + month + "/" + year + ", יום " + dayNames[meeting.date.getDay()] + " ושעה " + hh+":"+mm + "\nיש להגיע לפני הזמן ב-5 דקות\nביטול לפחות יומיים לפני יום הצילום\nנתראה בקרוב\nפאטמה אלזינאטי"
         const b = {
-            text: `היי, ${c.firstname +" " + c.lastname} בעל ת.ז. ${c.id} פגישה צילום ${meeting.newborn == true ? " ניובורן" : ""}\nבתאריך: ${day +"/" + month + "/" + year},יום ${dayNames[meetingSchema.date.getDay()]} ובשעה ${hh+":"+mm}\nבוטלה.\n יום טוב`,
+            text: msg, 
             from: `fatom`,
             to: c.phone,
+            }
+        
+        console.log("meeting date", meeting.date, new Date(meeting.date));
+        console.log("now",Date.now(),new Date(Date.now()) )
+        new Date(meeting.date) > new Date(Date.now()) && sendMessage.sendMessage(b);
         }
-        await sendMessage.sendMessage(b);
-        await Meeting.deleteOne({_id: req.params.id})
-        .then(async()=>{
-            const meetings = await Meeting.find();
-            return res.status(200).json({
-                success: true,
-                meetings
-            });
+    await Meeting.deleteOne({_id: req.params.id})
+    .then(async()=>{
+        const meetings = await Meeting.find();
+    return res.status(200).json({
+        success: true,
+        meetings
+    });
     })
     .catch((err) =>{
         if(err)

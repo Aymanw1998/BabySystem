@@ -1,162 +1,168 @@
 import React, { useContext, useState, useEffect } from 'react';
-import PropTypes from "prop-types";
-import { useNavigate } from 'react-router-dom';
-
-import Modal from "../../Modals/Modal"
-import Button from "react-bootstrap/Button";
-
-import {Container,Text, Image,} from 'react-bootstrap';
-import { Trash, PencilSquare} from 'react-bootstrap-icons';
-
-import babyImage from "../../../images/baby.png";
-import searchImage from "../../../images/search.png"
-import profileImage from "./../../../images/profile.jpg"
-import profileBoyImage from "./../../../images/profile-boy.png"
-import profileGirlImage from "./../../../images/profile-girl.png"
-
+import { Trash, PencilSquare, PersonPlusFill, CalendarPlus} from 'react-bootstrap-icons';
 import {customerService} from '../../../servises/customers.service';
-
-import CreateCustomerModal from "./../../Modals/Customers/CreateCustomerModal";
-import UpdateCustomerModal from "./../../Modals/Customers/UpdateCustomerModal"
 import "./Customer.css";
 
-const Card = (props) => {
-    const navigate = useNavigate();
-    const [date, setDate] = useState("");
-    const [phone, setPhone] = useState("");
-    const dataCustomer = {
-        firstname : props.name.split(" ")[0],
-        lastname : props.name.substr(props.name.split(" ")[0].length + 1, props.name.length + 1 - props.name.split(" ")[0].length),
-        avatar: props.avatar,
-        id: props.id,
-        phone: props.phone,
-        gender: props.gender,
-        date: props.date,
-    }
-    useEffect(()=>{
-        var d = new Date(props.date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-        month = (month.length < 2 ? '0' : '') + month;
-        day = (day.length < 2 ? '0' : '') + day;
-        dataCustomer.date = [year, month, day].join('-');
-        setDate([day, month, year].join('/'));
-        var p = props.phone.split("+972")[1];
-        p = p.length == 9 ? p = "0" + p.substr(0,2) + "-" + p.substr(2,3) + "-" + p.substr(5,4) : 
-                            p = "0" + p.substr(0,1) + "-" + p.substr(1,3) + "-" + p.substr(4,4);
-        console.log("pphone", props.phone, p)
-        setPhone(p);
-        console.log("data card", dataCustomer);
-    },[])
-    return (
-    <div>
-        <div className="card">
-            <div className="top">
-                <h2 className="name">{props.name}</h2>
-                {props.avatar? <img className="circle-img" src={props.avatar} alt="avatar_img" />:<img className="circle-img" src={props.gender == "זכר" ? /*profileImage*/ profileBoyImage : profileGirlImage} alt="avatar_img" />}
-            </div>
-            <table dir="ltr" className="bottom">
-                <tr>
-                    <td><p>{props.id}</p></td>
-                    <th><p>{"תעודת זיהות"}</p></th>
-                </tr>
-                <tr>
-                    <td><a href={"tel:" + props.phone}><p>{phone}</p></a></td>
-                    <th><p>{"מספר טלפון"}</p></th>
-                </tr>
-                <tr>
-                    <td><p>{props.gender}</p></td>
-                    <th><p>{"מין"}</p></th>
-                </tr>
-                <tr>
-                    <td><p>{date}</p></td>
-                    <th><p>{"תאריך לידה"}</p></th>
-                </tr>
-            </table>
-            <div className="flex relative right-10 px-10">
-                <Trash className="toClick"  size={40} onClick={async()=>{await customerService.deleteC(props.id); window.location.reload(); navigate("/customer");}}/>
-                <Modal option={"cu"} setCustomers={props.setCustomers} customers={props.customers} data={dataCustomer}/>
-                
-            </div>
-        </div>
-    </div>
-    );
-  }
+import Input from "react-phone-number-input/input";
+import CreateCustomer from './CreateCustomer';
+import UpdateCustomer from './UpdateCustomer';
+import CreateMeeting from '../Meeting/CreateMeeting';
+
 
 const Customer = () => {
-    const [show, setShow] = useState(false);
-
     const [customers, setCustomers] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [inputSearch, setInputSearch] = useState([]);
+
+    const [open, setOpen] = useState(false);
+    const handleClose = () => {
+        setOpen(false);
+        getAllCustomer();
+    };
+ 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const [open2, setOpen2] = useState(false);
+    const handleClose2 = () => {
+        setOpen2(false);
+        getAllCustomer();
+
+    };
+ 
+    const handleOpen2 = () => {
+        setOpen2(true);
+    };
+    const [search, setSearch] = useState("");
     useEffect(()=>{
-        console.log("customers",customers, "isLoading", isLoading);
-        
-    },[customers,isLoading]);
-
-    useEffect(()=>{},[inputSearch]);
-
-    function createCard(contacts) {
-        const contact = contacts;
-        if(inputSearch != ""){
-            var str = (contact.id +" " + contact.firstname + " " + contact.lastname+ " " + contact.phone + " " + contact.gender + " " + contact.avatar)
-            if(!str.includes(inputSearch))
-                return
-        }
-        return (
-        <Card
-            id={contact.id}
-            name={contact.firstname + " " + contact.lastname}
-            phone={contact.phone}
-            gender={contact.gender}
-            date={contact.date}
-            avatar={contact.avatar}
-            setCustomers={setCustomers}
-            customers={customers}
-        />
-        );
-        }
+        getAllCustomer();
+    },[search])
     const getAllCustomer = async()=>{
-        console.log("get all customers");
         try{
-            setIsLoading(true);
-            console.log("get all url");
             let c = await customerService.getC(null);
-            console.log("get all url out");
-            console.log("data",c.data);
-            setCustomers(c.data);
-            setIsLoading(false);
-        }
+            let newC = [];
+            c.data.map(item=>{
+                console.log(item.firstname.includes(search))
+                if(item.firstname.includes(search) || item.lastname.includes(search) || item.gender.includes(search) || item.phone.includes(search)){
+                    newC = [...newC, item];
+                }
+            })
+            console.log("search", search, c.data, newC);
+            if(search != "")
+                setCustomers(newC);
+            else setCustomers(c.data);
+            }
         catch(err){
-            console.log("error with get customers " + err)
+            alert("error with get customers " + err)
         }
     }
-    
+
+    const [selectedC, setSelectedC] = useState(null);
+
+    const updateScreen = async(c)=>{
+        console.log("c => ", c)
+        setSelectedC(c);
+    }
     useEffect(()=>{
         getAllCustomer();
     },[])
-return(
-    <div className='body'>
-        <div align="center" justify="center">
-            <h1 className='TitleScreen'>רשימת לקוחות
-                <Image src={babyImage} width='150px' height='150px' />
-            </h1>
-        </div>
-        <div className="col-auto inset-x-0 top-0">
-            <div className="input-group">
-                <div className="input-group-prepend">
-                    <div className="input-group-text"><Image src={searchImage} width='50px' height='50px'/></div>
-                    <input type="text" className="form-control" value={inputSearch} onChange={e => setInputSearch(e.target.value)} placeholder="חפש לקוח" />
-                    <Modal option={"cc"} setCustomers={setCustomers} customers = {customers}/>
-                </div>
+
+    
+    return(
+    <div className='responsive-container'>
+    <h1 className='title'>רשימת לקוחות</h1>
+    
+    <input type="search" name="s" value={search} onChange={(e)=> {setSearch(e.target.value)}}/>
+
+
+    <table>
+        <thead>
+            <tr>
+                {/* <th data-th="ת.ז.">#</th> */}
+                <th data-th="שם פרטי">שם פרטי</th>
+                <th data-th="שם משפחה">שם משפחה</th>
+                <th data-th="מין">מין</th>
+                <th data-th="מספר טלפון">מספר טלפון</th>
+                <th>פעולות</th>
+            </tr>
+        </thead>
+        <tbody>
+        {
+            customers && customers.map((c,i)=> {
+                return(
+                    <tr key={i}>
+                        {/* <td data-th="#">{i+1}</td> */}
+                        <td data-th="שם פרטי">{c.firstname}</td>
+                        <td data-th="שם משפחה">{c.lastname}</td>
+                        <td data-th="מין">{c.gender}</td>
+                        <td data-th="מספר טלפון">{c.phone.replace("+972","0")}</td>
+                        <td className='same-line'>
+                            <ul className="flex relative">
+                                <Trash className="toClick"  size={20} onClick={async()=>{await customerService.deleteC(c.id); let getall= await customerService.getC();setCustomers(getall.data);}}/>
+                                <PencilSquare className='toClick' size={20} onClick={()=>{handleOpen(); updateScreen(c);}}/>
+                                <CalendarPlus className='toClick' size={20} onClick={()=>{handleOpen2(); updateScreen(c);}}/>
+                            </ul>
+                            <ModalC isOpen={open} onClose={handleClose}>
+                                <div className='responsive-container'>
+                                    <button className="btn warning" onClick={handleClose}>יציאה</button>
+                                    <UpdateCustomer customers={customers} setCustomers={setCustomers} handleClose={handleClose} data={selectedC} />
+                                </div>
+                            </ModalC>
+                            <ModalC isOpen={open2} onClose={handleClose2}>
+                                <div className='responsive-container'>
+                                    <button className="btn warning" onClick={handleClose2}>יציאה</button>
+                                    <CreateMeeting customers={customers} c={selectedC}/>
+                                </div>
+                            </ModalC>
+
+                        </td>
+                    </tr>
+                )
+            })
+        }
+        <CreateCustomer customers={customers} setCustomers={setCustomers}/>
+        </tbody>
+    </table>
+    </div>)
+}
+
+const ModalC = ({ isOpen, onClose, children }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div id="div-modal"
+        onKeyDown={(e)=> {console.log("key", e.key);if (e.key === "Escape") {onClose();}}}            
+        tabIndex="1"
+        style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: "rgba(0, 0, 0, 0.5)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <div
+                onKeyDown={(e)=> {console.log("key", e.key);if (e.key === "Escape") {onClose();}}}
+                tabIndex={1}
+                style={{
+                    // background: "white",
+                    // height: 150,
+                    // width: 240,
+                    margin: "auto",
+                    padding: "2%",
+                    // border: "2px solid #000",
+                    borderRadius: "10px",
+                    // boxShadow: "2px solid black",
+                }}
+            >
+                <button className="btn warning" onClick={onClose}>X</button>
+                {children}
             </div>
         </div>
-        <div>
-            {customers && customers.map((c) => {return createCard(c)})}
-        </div>
-    </div>
-);
-}
+    );
+};
 
 export default Customer;

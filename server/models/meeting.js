@@ -7,7 +7,8 @@ const meetingSchema = new mongoose.Schema({
         type: String,
     },
     customer:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'customer',
     },
     date: {
         type: Date,
@@ -19,8 +20,8 @@ const meetingSchema = new mongoose.Schema({
     text: {
         type: String,
     },
-    newborn:{
-        type:Boolean
+    type:{
+        type: Number,
     }
 });
 

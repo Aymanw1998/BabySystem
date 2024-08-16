@@ -8,22 +8,21 @@ const send = async(req,res) => {
 
 }
 const sendMessage = async (body) => {
-  
+  try {
     const text = body.text;
     const to = body.to;
     const from = body.from; 
-    try {
-      const message = await client.messages.create({
+    const message = await client.messages.create({
       body: text,
       from: from,
       to: to,
     });
-    console.log("success send with twilio ==> ",message);
+    console.log(message);
+
     console.log('Message sent successfully:', message.sid);
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('Error sending message:', error.message);
   }
-
 };
 
 // Call the function to send a message

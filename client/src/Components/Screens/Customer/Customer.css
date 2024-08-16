@@ -1,87 +1,85 @@
-.modal {
-  background-color: cadetblue;
+
+.title {
+  font-weight: bold;
+  font-size: 50px;
 }
-.body {
-    font-family: sans-serif;
-    margin: 0 auto;
-    padding: 25px;
-    max-width: 400px;
-    min-width: 400px;
-    text-align: center;
-  }
+.responsive-container{
+  width:auto;
+  margin: 0 auto;
+  padding: 15px;
+  margin-top: 80px;
+  border-radius: 10px ;
+  box-shadow: 0px 0px 6px #666;
+  background-color: pink;
+}
 
-.TitleScreen{
-  font-size: 30px;
-}  
-.heading {
-    text-align: center;
-    font-size: 2em;
-    color: #2d3436;
-    margin: 20px 0 30px;
-  } 
+.responsive-container table {
+  width:100%;
+}
 
-  .card {
-    border-radius: 25px;
-    position: relative;
-    padding: 25px 15px;
-    background-color: #f395c9;
-    margin: 50px 0;
-    box-shadow: 0 2px 5px #ccc;
-    
+.responsive-container td {
+  border-color: solid 1px #0e0c0c;
+}
+
+.responsive-container td::before{
+  display: none;
+}
+
+.responsive-container th, .responsive-container td{
+  display: table-cell;
+  /* padding: 10px; */
+  text-align: right;
+}
+.responsive-container input{
+  /* border-style: solid; */
+  border-width: 1px; border-color: #0e0c0c;
+  border-radius: 50px;
+  text-indent:20px;
+}
+
+.toClick{
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+}
+
+input[type=search] { 
+	text-align: right;
+	cursor: pointer;
+	display: block; 
+	width: 20%; 
+	letter-spacing: 0px;        
+	text-shadow: 0 0 2px rgb(14, 13, 13);  
+  border-radius: 50px;
+	word-spacing: 10px;               
+}
+
+@media (max-width: 767px) {
+  .responsive-container {
+    width:90%;
   }
-  
-  .cardT {
-    background-color: #5ef3df;
-    
+  .responsive-container thead{
+    display: none;
   }
-  .top {
-    border-radius: 25px 25px 0 0;
-    height: 100px;
+  .responsive-container tbody, .responsive-container tr, .responsive-container td {
+    display: block;
     width: 100%;
-    background-color: #e96eb1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
   }
-  .name {
-    font-size: 30px;
-    color: #000000;
-    display: flex;
-    flex: 1;
-    margin: 5% 10px 0;
+  .responsive-container tr{
+    margin-bottom: 20px;
+    background-color: aliceblue;
   }
-  
-  .card img {
-    margin: 20px 0px 0 0;
+  .responsive-container td:first-child{
+    padding-top: .5em;
   }
-  
-  .circle-img {
-    /* border-radius: 50%; */
-     /* border: 7px solid #ffffff;  */
-    width: 130;
-    height: 110px;
-    top: 50px;
-    padding-left: 40px;
+  .responsive-container td:last-child{
+    padding-bottom: .5em;
   }
-  
-  .bottom {
-    margin-top: 120px;
-    text-align: right;
-    
-  }
-  
-  .info {
-    margin:  0;
-    color: #000000;
-    direction: ltr;
-    
-  }
-  
-  .bold-text{
+  .responsive-container td:before{
+    content: attr(data-th);
     font-weight: bold;
+    width: 6.5em;
+    display: inline-block;
   }
-
-  .toClick{
-    cursor: pointer;
-  }
+}
