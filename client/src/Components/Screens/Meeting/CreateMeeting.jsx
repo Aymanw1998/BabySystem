@@ -63,7 +63,7 @@ const CreateMeeting = ({customers = null, meetings = null, setMeetings = null, c
     return(
         <>
             {
-                c &&  <tr>
+                c && <thead> <tr>
                 <th>#</th>
                 <th>כותרת</th>
                 <th>לקוח</th>
@@ -71,7 +71,7 @@ const CreateMeeting = ({customers = null, meetings = null, setMeetings = null, c
                 <th>סוג צילום</th>
                 {type ==3 && <th>טקסט חופשי</th>}
                 <th>פעולות</th>
-            </tr>
+            </tr> </thead>
             }
         <tr>
             {/* <td></td> */}
